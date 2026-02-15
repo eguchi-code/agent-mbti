@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>不動産エージェント MBTI診断</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Inter','Noto Sans JP',sans-serif;background:#f8f9fa;color:#1a1a2e;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:#6c5ce7;color:#fff}
+
+/* ===== Intro ===== */
+.screen{display:none;min-height:100vh}
+.screen.active{display:flex}
+#intro{flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);color:#fff;position:relative;overflow:hidden}
+#intro::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 40%,rgba(108,92,231,0.3),transparent 50%),radial-gradient(circle at 70% 60%,rgba(0,206,209,0.2),transparent 50%)}
+.intro-inner{position:relative;z-index:1;max-width:640px}
+.intro-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 16px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:100px;font-size:12px;font-weight:600;letter-spacing:0.05em;margin-bottom:24px;backdrop-filter:blur(10px)}
+.intro-title{font-size:clamp(28px,5vw,48px);font-weight:900;letter-spacing:-0.03em;margin-bottom:8px;background:linear-gradient(135deg,#fff,#a29bfe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2}
+.intro-sub{font-size:clamp(14px,2vw,18px);color:rgba(255,255,255,0.7);margin-bottom:40px;line-height:1.7}
+.intro-axes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:40px;text-align:left}
+.intro-axis{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px;backdrop-filter:blur(10px)}
+.intro-axis-letters{font-size:20px;font-weight:800;margin-bottom:4px;background:linear-gradient(135deg,#6c5ce7,#00cec9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.intro-axis-label{font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:4px;letter-spacing:0.1em;text-transform:uppercase}
+.intro-axis-desc{font-size:13px;color:rgba(255,255,255,0.75);line-height:1.5}
+.btn-start{padding:16px 48px;background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:#fff;border:none;border-radius:100px;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 8px 32px rgba(108,92,231,0.4)}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(108,92,231,0.5)}
+.intro-note{font-size:12px;color:rgba(255,255,255,0.4);margin-top:16px}
+
+/* ===== Quiz ===== */
+#quiz{flex-direction:column;background:#f8f9fa}
+.progress-bar{position:fixed;top:0;left:0;right:0;height:4px;background:#e9ecef;z-index:100}
+.progress-fill{height:100%;background:linear-gradient(90deg,#6c5ce7,#00cec9);transition:width .4s cubic-bezier(.4,0,.2,1);border-radius:0 2px 2px 0}
+.quiz-header{position:fixed;top:4px;left:0;right:0;height:56px;background:rgba(248,249,250,0.95);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid #e9ecef;z-index:99}
+.quiz-counter{font-size:13px;font-weight:600;color:#6c5ce7}
+.quiz-axis-tag{font-size:11px;font-weight:600;color:#868e96;background:#f1f3f5;padding:4px 12px;border-radius:100px}
+.quiz-body{flex:1;display:flex;align-items:center;justify-content:center;padding:80px 24px 40px;min-height:100vh}
+.question-card{max-width:680px;width:100%;animation:fadeIn .5s ease}
+.question-text{font-size:clamp(18px,3vw,24px);font-weight:700;text-align:center;color:#1a1a2e;margin-bottom:48px;line-height:1.5;letter-spacing:-0.01em}
+.scale-container{margin-bottom:32px}
+.scale-labels{display:flex;justify-content:space-between;margin-bottom:16px}
+.scale-label{font-size:13px;font-weight:600;color:#495057;max-width:200px;line-height:1.4}
+.scale-label:first-child{text-align:left}
+.scale-label:last-child{text-align:right}
+.scale-options{display:flex;justify-content:center;gap:8px}
+.scale-opt{width:56px;height:56px;border-radius:50%;border:2px solid #dee2e6;background:#fff;cursor:pointer;transition:all .2s;position:relative;display:flex;align-items:center;justify-content:center}
+.scale-opt:nth-child(1),.scale-opt:nth-child(7){width:64px;height:64px}
+.scale-opt:nth-child(2),.scale-opt:nth-child(6){width:56px;height:56px}
+.scale-opt:nth-child(3),.scale-opt:nth-child(5){width:48px;height:48px}
+.scale-opt:nth-child(4){width:40px;height:40px;border-color:#ced4da}
+.scale-opt:hover{border-color:#6c5ce7;background:#f8f7ff;transform:scale(1.1)}
+.scale-opt.selected{background:linear-gradient(135deg,#6c5ce7,#a29bfe);border-color:#6c5ce7;transform:scale(1.15);box-shadow:0 4px 16px rgba(108,92,231,0.3)}
+.scale-opt.selected::after{content:'';width:8px;height:8px;background:#fff;border-radius:50%}
+.scale-tick-labels{display:flex;justify-content:space-between;margin-top:8px;padding:0 4px}
+.scale-tick{font-size:10px;color:#adb5bd;text-align:center}
+.quiz-nav{display:flex;justify-content:center;gap:12px;margin-top:16px}
+.btn-nav{padding:12px 32px;border-radius:100px;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;border:none}
+.btn-back{background:#f1f3f5;color:#495057}.btn-back:hover{background:#e9ecef}
+.btn-next{background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:#fff;box-shadow:0 4px 16px rgba(108,92,231,0.3)}.btn-next:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(108,92,231,0.4)}
+.btn-next:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* ===== Result ===== */
+#result{flex-direction:column;align-items:center;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);color:#fff;padding:60px 24px;min-height:100vh}
+.result-inner{max-width:720px;width:100%;text-align:center}
+.result-reveal{animation:resultPop .8s cubic-bezier(.175,.885,.32,1.275)}
+.result-label{font-size:13px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:12px}
+.result-type-code{font-size:clamp(64px,12vw,120px);font-weight:900;letter-spacing:0.05em;background:linear-gradient(135deg,#6c5ce7,#00cec9,#a29bfe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1;margin-bottom:8px}
+.result-type-name{font-size:clamp(20px,3vw,28px);font-weight:700;margin-bottom:32px;color:rgba(255,255,255,0.9)}
+.result-axes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:40px}
+.result-axis{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:16px;text-align:left}
+.result-axis-label{font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:0.1em;margin-bottom:8px}
+.result-axis-bar{height:6px;background:rgba(255,255,255,0.1);border-radius:3px;margin-bottom:6px;overflow:hidden;position:relative}
+.result-axis-fill{height:100%;border-radius:3px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.result-axis-ends{display:flex;justify-content:space-between;font-size:11px}
+.result-axis-active{color:#a29bfe;font-weight:700}
+.result-axis-inactive{color:rgba(255,255,255,0.3)}
+.result-desc-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:32px;text-align:left;margin-bottom:32px;backdrop-filter:blur(10px)}
+.result-desc-title{font-size:15px;font-weight:700;color:#a29bfe;margin-bottom:12px}
+.result-desc-text{font-size:15px;color:rgba(255,255,255,0.75);line-height:1.9}
+.result-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px;justify-content:center}
+.result-tag{padding:6px 14px;background:rgba(108,92,231,0.15);border:1px solid rgba(108,92,231,0.3);border-radius:100px;font-size:12px;font-weight:600;color:#a29bfe}
+.btn-retry{padding:14px 40px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:100px;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;margin-top:16px}
+.btn-retry:hover{background:rgba(255,255,255,0.15)}
+.btn-share{padding:14px 40px;background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:#fff;border:none;border-radius:100px;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;box-shadow:0 8px 32px rgba(108,92,231,0.4)}
+.btn-share:hover{transform:translateY(-2px)}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes resultPop{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+
+@media(max-width:640px){
+  .intro-axes{grid-template-columns:1fr}
+  .result-axes{grid-template-columns:1fr}
+  .scale-opt:nth-child(1),.scale-opt:nth-child(7){width:52px;height:52px}
+  .scale-opt:nth-child(2),.scale-opt:nth-child(6){width:46px;height:46px}
+  .scale-opt:nth-child(3),.scale-opt:nth-child(5){width:40px;height:40px}
+  .scale-opt:nth-child(4){width:34px;height:34px}
+  .scale-options{gap:6px}
+  .scale-label{font-size:12px;max-width:140px}
+}
+</style>
+</head>
+<body>
+
+<!-- Intro Screen -->
+<div id="intro" class="screen active">
+  <div class="intro-inner">
+    <div class="intro-badge">Real Estate Agent Personality Test</div>
+    <h1 class="intro-title">不動産エージェント<br>MBTI診断</h1>
+    <p class="intro-sub">20の質問に答えるだけで、あなたの不動産エージェントとしての<br>パーソナリティタイプが分かります。</p>
+    <div class="intro-axes">
+      <div class="intro-axis">
+        <div class="intro-axis-letters">C / R</div>
+        <div class="intro-axis-label">Client Approach</div>
+        <div class="intro-axis-desc"><b>Closer</b>（攻めのクロージング）vs <b>Relator</b>（信頼構築型）</div>
+      </div>
+      <div class="intro-axis">
+        <div class="intro-axis-letters">O / E</div>
+        <div class="intro-axis-label">Advisory Style</div>
+        <div class="intro-axis-desc"><b>Objective</b>（データ分析型）vs <b>Empathic</b>（共感・感覚型）</div>
+      </div>
+      <div class="intro-axis">
+        <div class="intro-axis-letters">L / A</div>
+        <div class="intro-axis-label">Market Position</div>
+        <div class="intro-axis-desc"><b>Luxury</b>（質・高額帯特化）vs <b>Accelerate</b>（件数・効率型）</div>
+      </div>
+      <div class="intro-axis">
+        <div class="intro-axis-letters">T / S</div>
+        <div class="intro-axis-label">Work Style</div>
+        <div class="intro-axis-desc"><b>Tactical</b>（計画・戦略型）vs <b>Speedy</b>（即断即決型）</div>
+      </div>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">診断をはじめる</button>
+    <p class="intro-note">所要時間：約3分 / 全20問</p>
+  </div>
+</div>
+
+<!-- Quiz Screen -->
+<div id="quiz" class="screen">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="quiz-header">
+    <span class="quiz-counter" id="quizCounter">Q1 / 20</span>
+    <span class="quiz-axis-tag" id="quizAxisTag"></span>
+  </div>
+  <div class="quiz-body">
+    <div class="question-card" id="questionCard">
+      <div class="question-text" id="questionText"></div>
+      <div class="scale-container">
+        <div class="scale-labels">
+          <div class="scale-label" id="labelLeft"></div>
+          <div class="scale-label" id="labelRight"></div>
+        </div>
+        <div class="scale-options" id="scaleOptions"></div>
+        <div class="scale-tick-labels">
+          <span class="scale-tick">とても<br>そう思う</span>
+          <span class="scale-tick">やや<br>そう思う</span>
+          <span class="scale-tick">少し<br>そう思う</span>
+          <span class="scale-tick">中立</span>
+          <span class="scale-tick">少し<br>そう思う</span>
+          <span class="scale-tick">やや<br>そう思う</span>
+          <span class="scale-tick">とても<br>そう思う</span>
+        </div>
+      </div>
+      <div class="quiz-nav">
+        <button class="btn-nav btn-back" id="btnBack" onclick="prevQuestion()">戻る</button>
+        <button class="btn-nav btn-next" id="btnNext" onclick="nextQuestion()" disabled>次へ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Result Screen -->
+<div id="result" class="screen">
+  <div class="result-inner" id="resultContent"></div>
+</div>
+
+<script>
+const questions = [
+  // Axis 1: C (Closer) vs R (Relator) — low score = C, high score = R
+  {axis:0, tag:'Client Approach', q:'あなたの営業スタイルに近いのは？', left:'初回面談から物件提案・クロージングまで一気に進めたい', right:'初回は関係構築に集中し、提案は信頼ができてから'},
+  {axis:0, tag:'Client Approach', q:'案件の進め方として近いのは？', left:'自分から積極的に連絡を取り、商談を前に動かしていく', right:'顧客のペースを尊重し、相談が来るタイミングを大切にする'},
+  {axis:0, tag:'Client Approach', q:'商談で心がけていることは？', left:'明確なクロージングポイントを設定し、決断を促す', right:'顧客が自然に「この人にお願いしたい」と思える環境を作る'},
+  {axis:0, tag:'Client Approach', q:'時間の使い方として理想に近いのは？', left:'新規開拓に多くの時間を投資する', right:'既存顧客のフォローと紹介獲得に時間を使う'},
+  {axis:0, tag:'Client Approach', q:'自分の成果をどう評価したい？', left:'決めた件数・売上で測りたい', right:'顧客の満足度・リピート率で測りたい'},
+
+  // Axis 2: O (Objective) vs E (Empathic) — low = O, high = E
+  {axis:1, tag:'Advisory Style', q:'物件を提案するとき、最初に何を伝える？', left:'相場データ・利回り・資産価値などの数字', right:'その街の暮らし・ライフスタイルのイメージ'},
+  {axis:1, tag:'Advisory Style', q:'顧客が迷っているとき、どうアプローチする？', left:'市場データや比較表を見せて、論理的に判断材料を提供する', right:'顧客の気持ちに寄り添い、不安の根源を一緒に探る'},
+  {axis:1, tag:'Advisory Style', q:'提案で最も重視するポイントは？', left:'物件の資産価値・将来の値上がり可能性', right:'顧客がそこで暮らす日々のイメージと幸福感'},
+  {axis:1, tag:'Advisory Style', q:'提案資料を作るなら？', left:'グラフ・市場レポート・比較分析表を充実させる', right:'物件の写真・間取りのストーリー・周辺環境の魅力を伝える'},
+  {axis:1, tag:'Advisory Style', q:'優れたエージェントの条件は？', left:'市場を誰よりも深く分析し、正確な価格査定ができる人', right:'顧客の人生に寄り添い、本当に望む暮らしを引き出せる人'},
+
+  // Axis 3: L (Luxury) vs A (Accelerate) — low = L, high = A
+  {axis:2, tag:'Market Position', q:'仕事のスタンスとして近いのは？', left:'1件に時間をかけて最高の結果を追求する', right:'多くの件数をこなして経験とスキルを磨く'},
+  {axis:2, tag:'Market Position', q:'磨きたいスキルは？', left:'富裕層対応・高額物件に特化した専門性', right:'幅広い価格帯・物件タイプへの対応力'},
+  {axis:2, tag:'Market Position', q:'理想の顧客関係は？', left:'少数の上顧客と深く長い信頼関係を築く', right:'多くの顧客ネットワークを広げ、紹介の連鎖を生む'},
+  {axis:2, tag:'Market Position', q:'あなたにとって重要なKPIは？', left:'手数料単価の高さ・1件あたりの収益', right:'成約件数の多さ・市場での存在感'},
+  {axis:2, tag:'Market Position', q:'キャリアの理想像は？', left:'特定エリア・高額帯のNo.1スペシャリスト', right:'どんな案件でも対応できるオールラウンダー'},
+
+  // Axis 4: T (Tactical) vs S (Speedy) — low = T, high = S
+  {axis:3, tag:'Work Style', q:'案件への取り組み方は？', left:'事前に綿密な戦略と提案シナリオを組み立ててから動く', right:'まず動いてみて、状況を見ながら柔軟に修正する'},
+  {axis:3, tag:'Work Style', q:'顧客・案件の管理方法は？', left:'CRMや管理ツールで体系的に整理・分析する', right:'自分の記憶と勘を頼りに、柔軟にハンドリングする'},
+  {axis:3, tag:'Work Style', q:'目標の立て方は？', left:'月次・週次の数値目標とアクションプランを必ず設定する', right:'日々のチャンスを逃さず、臨機応変に最適解を選ぶ'},
+  {axis:3, tag:'Work Style', q:'将来への投資として重要なのは？', left:'長期的なパーソナルブランドの構築', right:'今すぐ成果につながる行動量の最大化'},
+  {axis:3, tag:'Work Style', q:'商談の準備は？', left:'事前にシナリオ・想定問答・資料を万全に準備する', right:'現場の空気を読み、相手に合わせてアドリブで対応する'},
+];
+
+const typeData = {
+  'COLT':{name:'ストラテジック・クローザー',desc:'データに基づく緻密な戦略で高額物件を仕留めるトップガン。市場分析力と交渉力を武器に、富裕層マーケットで圧倒的な成果を出す。計画性と推進力を兼ね備えた、業界のエリート型エージェント。',tags:['戦略家','高額帯特化','データドリブン','計画的クロージング']},
+  'COLS':{name:'スピード・スナイパー',desc:'市場の機を逃さず、データを武器に即座に高額案件を射止める。スピードと分析力の両立で、他のエージェントが動く前に勝負を決める。高額帯マーケットのファストムーバー。',tags:['即断即決','市場の読み','高額帯','スピード勝負']},
+  'COAT':{name:'データ・アーキテクト',desc:'分析力と計画性で大量の案件を効率的に処理するシステマチックなエージェント。CRMと数字を駆使し、仕組み化された営業プロセスで安定した成果を生み出す。',tags:['効率化','仕組み化','データ分析','量産型']},
+  'COAS':{name:'アクセル・ドライバー',desc:'データを片手にアクセル全開で件数を稼ぐ。市場の動きを数字で捉え、素早い判断と行動力で次々と成約を重ねる。スピードと分析の両輪で駆け抜けるスプリンター。',tags:['行動量','スピード','数字に強い','成約マシン']},
+  'CELT':{name:'プレミアム・コンシェルジュ',desc:'顧客の夢と感性を理解し、計画的にプレミアムな体験を設計する。高額物件の提案にストーリーを紡ぎ、感動的な住まい探しの旅を演出。丁寧さと推進力を兼ね備えた、富裕層が指名するエージェント。',tags:['感性派','富裕層対応','体験設計','ストーリーテラー']},
+  'CELS':{name:'インスピレーション・クローザー',desc:'直感とセンスで高額帯の顧客の心を掴み、勢いでクロージングまで持っていく。空気を読む力と大胆さが武器。感覚派でありながら結果にコミットする情熱型。',tags:['直感型','大胆','センス','情熱']},
+  'CEAT':{name:'ピープル・エンジニア',desc:'共感力を武器に信頼を獲得しながら、計画的に件数を伸ばす。顧客一人ひとりの気持ちを理解した上で、効率的なプロセスで成約に導く。人間力×仕組み化のハイブリッド型。',tags:['共感力','効率化','信頼構築','プロセス重視']},
+  'CEAS':{name:'エモーショナル・スプリンター',desc:'人の心を動かす力とスピードを兼ね備えた情熱のスプリンター。顧客の感情に火をつけ、勢いに乗せて次々と成約を生み出す。エネルギッシュでカリスマ性のあるタイプ。',tags:['情熱','カリスマ','スピード','感情に訴える']},
+  'ROLT':{name:'マーケット・アドバイザー',desc:'深い市場知識と長期的な信頼関係で、富裕層の資産ポートフォリオに欠かせないアドバイザーに。データに基づく的確な助言と、じっくり築いた関係性が強み。紹介だけで案件が回る理想形。',tags:['信頼型','資産アドバイス','長期関係','紹介営業']},
+  'ROLS':{name:'トレンド・ナビゲーター',desc:'市場の最新動向を誰よりも早くキャッチし、信頼関係のある顧客にタイムリーに届ける。スピード感ある情報提供で「この人に聞けば間違いない」と思われる存在。',tags:['情報通','タイムリー','信頼','市場トレンド']},
+  'ROAT':{name:'ネットワーク・ストラテジスト',desc:'戦略的に人脈を構築し、紹介の連鎖で安定した件数を生み出す。データで裏付けられた提案と、長期的な関係構築が両立。持続可能な成長を実現するタイプ。',tags:['人脈構築','戦略的','安定成長','紹介連鎖']},
+  'ROAS':{name:'コミュニティ・ハブ',desc:'圧倒的な人脈と行動力で、地域の不動産ハブとして機能する。データも活用しつつ、フットワークの軽さで幅広い案件を次々とマッチング。顔が広く、頼られる存在。',tags:['人脈','フットワーク','地域密着','マッチング力']},
+  'RELT':{name:'ライフデザイン・プランナー',desc:'顧客の人生設計に深く関わり、理想の住まいを長期計画で実現するパートナー。共感力と計画性で、富裕層の人生に寄り添うかけがえのない存在に。「この人にしか頼めない」と言われるタイプ。',tags:['人生設計','寄り添い型','長期パートナー','唯一無二']},
+  'RELS':{name:'フィーリング・マエストロ',desc:'感性と直感で顧客の本当の望みを引き出し、高額帯の物件で夢を実現する。スピード感のあるコミュニケーションと深い共感力で、出会ってすぐに「この人だ」と思わせる天性のエージェント。',tags:['天性の感覚','共感力','直感','スター性']},
+  'REAT':{name:'トラスト・ビルダー',desc:'信頼と共感をベースに、計画的に顧客基盤を広げていく。一人ひとりとの関係を大切にしながら、仕組み化で効率も追求。温かさと合理性を両立する、持続成長型のエージェント。',tags:['信頼第一','共感','計画的成長','温かい合理主義']},
+  'REAS':{name:'ソーシャル・コネクター',desc:'持ち前のコミュニケーション力と行動量で、人と人、人と物件をつなぐ天才的コネクター。共感力で信頼を得ながら、スピーディーに案件を回していく。周囲を巻き込むエネルギーが最大の武器。',tags:['コミュ力','行動量','つなぐ力','エネルギッシュ']},
+};
+
+let currentQ = 0;
+const answers = new Array(20).fill(null);
+
+function startQuiz(){
+  document.getElementById('intro').classList.remove('active');
+  document.getElementById('quiz').classList.add('active');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = questions[currentQ];
+  document.getElementById('progressFill').style.width = ((currentQ + 1) / 20 * 100) + '%';
+  document.getElementById('quizCounter').textContent = `Q${currentQ + 1} / 20`;
+  document.getElementById('quizAxisTag').textContent = q.tag;
+  document.getElementById('questionText').textContent = q.q;
+  document.getElementById('labelLeft').textContent = q.left;
+  document.getElementById('labelRight').textContent = q.right;
+
+  const opts = document.getElementById('scaleOptions');
+  opts.innerHTML = '';
+  for(let i = 1; i <= 7; i++){
+    const btn = document.createElement('div');
+    btn.className = 'scale-opt' + (answers[currentQ] === i ? ' selected' : '');
+    btn.onclick = () => selectOption(i);
+    opts.appendChild(btn);
+  }
+
+  document.getElementById('btnBack').style.display = currentQ === 0 ? 'none' : '';
+  document.getElementById('btnNext').textContent = currentQ === 19 ? '結果を見る' : '次へ';
+  document.getElementById('btnNext').disabled = answers[currentQ] === null;
+
+  // Re-trigger animation
+  const card = document.getElementById('questionCard');
+  card.style.animation = 'none';
+  card.offsetHeight;
+  card.style.animation = 'fadeIn .4s ease';
+}
+
+function selectOption(val){
+  answers[currentQ] = val;
+  document.querySelectorAll('.scale-opt').forEach((el, i) => {
+    el.classList.toggle('selected', i === val - 1);
+  });
+  document.getElementById('btnNext').disabled = false;
+}
+
+function nextQuestion(){
+  if(answers[currentQ] === null) return;
+  if(currentQ < 19){
+    currentQ++;
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function prevQuestion(){
+  if(currentQ > 0){
+    currentQ--;
+    renderQuestion();
+  }
+}
+
+function showResult(){
+  // Calculate scores for each axis (5 questions each)
+  // Low score = first letter, High score = second letter
+  const axisScores = [0,0,0,0];
+  const axisCounts = [0,0,0,0];
+  questions.forEach((q, i) => {
+    if(answers[i] !== null){
+      axisScores[q.axis] += answers[i]; // 1-7, where 1=strong left, 7=strong right
+      axisCounts[q.axis]++;
+    }
+  });
+
+  // Normalize to 0-100 (where 0=fully left letter, 100=fully right letter)
+  const axisPercent = axisScores.map((s, i) => {
+    const avg = s / axisCounts[i]; // 1-7
+    return Math.round((avg - 1) / 6 * 100); // 0-100
+  });
+
+  const letters = [
+    axisPercent[0] < 50 ? 'C' : 'R',
+    axisPercent[1] < 50 ? 'O' : 'E',
+    axisPercent[2] < 50 ? 'L' : 'A',
+    axisPercent[3] < 50 ? 'T' : 'S',
+  ];
+  const typeCode = letters.join('');
+
+  const axisNames = [
+    {label: 'Client Approach', left: 'Closer', right: 'Relator', leftCode: 'C', rightCode: 'R'},
+    {label: 'Advisory Style', left: 'Objective', right: 'Empathic', leftCode: 'O', rightCode: 'E'},
+    {label: 'Market Position', left: 'Luxury', right: 'Accelerate', leftCode: 'L', rightCode: 'A'},
+    {label: 'Work Style', left: 'Tactical', right: 'Speedy', leftCode: 'T', rightCode: 'S'},
+  ];
+
+  const data = typeData[typeCode] || {name:'ユニーク・エージェント', desc:'あなたは独自のスタイルを持つエージェントです。', tags:['独自スタイル']};
+
+  document.getElementById('quiz').classList.remove('active');
+  document.getElementById('result').classList.add('active');
+
+  document.getElementById('resultContent').innerHTML = `
+    <div class="result-reveal">
+      <div class="result-label">Your Agent Type</div>
+      <div class="result-type-code">${typeCode}</div>
+      <div class="result-type-name">${data.name}</div>
+    </div>
+    <div class="result-axes">
+      ${axisNames.map((a, i) => {
+        const pct = axisPercent[i];
+        const isLeft = pct < 50;
+        const fillPct = isLeft ? (100 - pct) : pct;
+        const gradDir = isLeft ? 'to left' : 'to right';
+        return `<div class="result-axis">
+          <div class="result-axis-label">${a.label}</div>
+          <div class="result-axis-bar">
+            <div class="result-axis-fill" style="width:${fillPct}%;${isLeft ? 'float:right;' : ''}background:linear-gradient(${gradDir},#6c5ce7,#a29bfe);"></div>
+          </div>
+          <div class="result-axis-ends">
+            <span class="${isLeft ? 'result-axis-active' : 'result-axis-inactive'}">${a.leftCode} ${a.left} ${isLeft ? Math.round(100 - pct) + '%' : ''}</span>
+            <span class="${!isLeft ? 'result-axis-active' : 'result-axis-inactive'}">${!isLeft ? Math.round(pct) + '%' : ''} ${a.right} ${a.rightCode}</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+    <div class="result-desc-card">
+      <div class="result-desc-title">あなたのエージェントタイプ</div>
+      <div class="result-desc-text">${data.desc}</div>
+    </div>
+    <div class="result-tags">
+      ${data.tags.map(t => `<span class="result-tag">#${t}</span>`).join('')}
+    </div>
+    <button class="btn-share" onclick="shareResult('${typeCode}','${data.name}')">結果をシェアする</button>
+    <br>
+    <button class="btn-retry" onclick="retry()">もう一度診断する</button>
+  `;
+
+  // Animate bars after render
+  setTimeout(() => {
+    document.querySelectorAll('.result-axis-fill').forEach(el => {
+      const w = el.style.width;
+      el.style.width = '0%';
+      setTimeout(() => { el.style.width = w; }, 100);
+    });
+  }, 300);
+}
+
+function shareResult(code, name){
+  const text = `私の不動産エージェントタイプは【${code}】${name}でした！\n\n不動産エージェントMBTI診断`;
+  if(navigator.share){
+    navigator.share({title:'不動産エージェントMBTI診断', text});
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('結果をクリップボードにコピーしました！');
+    });
+  }
+}
+
+function retry(){
+  currentQ = 0;
+  answers.fill(null);
+  document.getElementById('result').classList.remove('active');
+  document.getElementById('intro').classList.add('active');
+}
+</script>
+</body>
+</html>
