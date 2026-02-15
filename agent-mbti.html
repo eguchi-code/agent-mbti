@@ -68,11 +68,11 @@ pointer-events:none;z-index:0}
 .btn-start{padding:16px 56px;background:linear-gradient(135deg,#6c5ce7,#a29bfe);color:#fff;border:none;border-radius:100px;font-size:16px;font-weight:700;cursor:pointer;transition:all .25s;box-shadow:0 8px 32px rgba(108,92,231,0.35);width:280px}
 .btn-start:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 12px 48px rgba(108,92,231,0.5)}
 .btn-start:active{transform:translateY(0) scale(0.98)}
-.intro-links{display:flex;gap:24px;margin-top:4px}
-.intro-link{font-size:13px;color:rgba(255,255,255,0.4);cursor:pointer;transition:color .2s;border:none;background:none;font-family:inherit;position:relative}
-.intro-link:hover{color:rgba(255,255,255,0.7)}
-.intro-link::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1px;background:rgba(255,255,255,0.4);transition:width .2s}
-.intro-link:hover::after{width:100%}
+.intro-links{display:flex;gap:12px;margin-top:4px}
+.intro-link-btn{display:flex;align-items:center;gap:8px;padding:12px 24px;border-radius:100px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);font-size:13px;font-weight:500;cursor:pointer;transition:all .25s;font-family:inherit;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.intro-link-btn:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.2);color:#fff;transform:translateY(-2px)}
+.intro-link-btn svg{flex-shrink:0;opacity:0.7}
+.intro-link-btn:hover svg{opacity:1}
 .intro-note{font-size:11px;color:rgba(255,255,255,0.25);margin-top:20px;letter-spacing:0.02em}
 
 /* ===== Modal overlay ===== */
@@ -262,8 +262,14 @@ pointer-events:none;z-index:0}
     <div class="intro-cta-group">
       <button class="btn-start" onclick="startQuiz()">さっそく診断をはじめる</button>
       <div class="intro-links">
-        <button class="intro-link" onclick="showAllTypes()">16のタイプを見る</button>
-        <button class="intro-link" onclick="showAbout()">タイプ診断とは？</button>
+        <button class="intro-link-btn" onclick="showAllTypes()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          16のタイプ
+        </button>
+        <button class="intro-link-btn" onclick="showAbout()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          診断とは？
+        </button>
       </div>
     </div>
     <p class="intro-note">所要時間：約3分 / 全20問</p>
